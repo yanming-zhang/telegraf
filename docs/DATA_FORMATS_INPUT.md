@@ -9,10 +9,8 @@ Telegraf is able to parse the following input data formats into metrics:
 1. [Nagios](https://github.com/influxdata/telegraf/blob/master/docs/DATA_FORMATS_INPUT.md#nagios) (exec input only)
 1. [Collectd](https://github.com/influxdata/telegraf/blob/master/docs/DATA_FORMATS_INPUT.md#collectd)
 1. [Dropwizard](https://github.com/influxdata/telegraf/blob/master/docs/DATA_FORMATS_INPUT.md#dropwizard)
-<<<<<<< HEAD
 1. [Grok](https://github.com/influxdata/telegraf/blob/master/docs/DATA_FORMATS_INPUT.md#grok)
-=======
->>>>>>> 23523ffd10bac33b0e40bad98bee4213049109ff
+
 
 Telegraf metrics, like InfluxDB
 [points](https://docs.influxdata.com/influxdb/v0.10/write_protocols/line/),
@@ -655,7 +653,6 @@ For more information about the dropwizard json format see
   # [inputs.exec.dropwizard_tag_paths]
   #   tag1 = "tags.tag1"
   #   tag2 = "tags.tag2"
-<<<<<<< HEAD
 ```
 
 #### Grok
@@ -689,8 +686,4 @@ Parse logstash-style "grok" patterns:
     ##   2. "Canada/Eastern"  -- Unix TZ values like those found in https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
     ##   3. UTC               -- or blank/unspecified, will return timestamp in UTC
     timezone = "Canada/Eastern"
-    ```
-=======
-
 ```
->>>>>>> 23523ffd10bac33b0e40bad98bee4213049109ff

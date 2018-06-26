@@ -88,7 +88,6 @@ type Config struct {
 	// an optional map containing tag names as keys and json paths to retrieve the tag values from as values
 	// used if TagsPath is empty or doesn't return any tags
 	DropwizardTagPathsMap map[string]string
-<<<<<<< HEAD
 
 	//grok patterns
 	Patterns           []string
@@ -96,8 +95,6 @@ type Config struct {
 	CustomPatterns     string
 	CustomPatternFiles []string
 	TimeZone           string
-=======
->>>>>>> 23523ffd10bac33b0e40bad98bee4213049109ff
 }
 
 // NewParser returns a Parser interface based on the given config.
@@ -131,7 +128,7 @@ func NewParser(config *Config) (Parser, error) {
 			config.DefaultTags,
 			config.Separator,
 			config.Templates)
-<<<<<<< HEAD
+
 	case "grok":
 		parser, err = NewGrokParser(
 			config.MetricName,
@@ -140,8 +137,6 @@ func NewParser(config *Config) (Parser, error) {
 			config.CustomPatterns,
 			config.CustomPatternFiles,
 			config.TimeZone)
-=======
->>>>>>> 23523ffd10bac33b0e40bad98bee4213049109ff
 	default:
 		err = fmt.Errorf("Invalid data format: %s", config.DataFormat)
 	}
