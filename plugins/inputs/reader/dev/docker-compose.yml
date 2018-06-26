@@ -11,3 +11,4 @@ services:
         - /telegraf
         - --config
         - /telegraf.conf
+        
