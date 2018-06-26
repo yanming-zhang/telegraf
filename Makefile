@@ -91,6 +91,11 @@ docker-image:
 
 plugins/parsers/influx/machine.go: plugins/parsers/influx/machine.go.rl
 	ragel -Z -G2 $^ -o $@
+<<<<<<< HEAD
 
 .PHONY: deps telegraf install test test-windows lint vet test-all package clean docker-image fmtcheck uint64 static
 
+=======
+
+.PHONY: deps telegraf install test test-windows lint vet test-all package clean docker-image fmtcheck uint64
+>>>>>>> 23523ffd10bac33b0e40bad98bee4213049109ff

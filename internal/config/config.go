@@ -1338,6 +1338,7 @@ func buildParser(name string, tbl *ast.Table) (parsers.Parser, error) {
 		}
 	}
 
+<<<<<<< HEAD
 	//for grok data_format
 	if node, ok := tbl.Fields["named_patterns"]; ok {
 		if kv, ok := node.(*ast.KeyValue); ok {
@@ -1391,6 +1392,8 @@ func buildParser(name string, tbl *ast.Table) (parsers.Parser, error) {
 		}
 	}
 
+=======
+>>>>>>> 23523ffd10bac33b0e40bad98bee4213049109ff
 	c.MetricName = name
 
 	delete(tbl.Fields, "data_format")
@@ -1406,11 +1409,14 @@ func buildParser(name string, tbl *ast.Table) (parsers.Parser, error) {
 	delete(tbl.Fields, "dropwizard_time_format")
 	delete(tbl.Fields, "dropwizard_tags_path")
 	delete(tbl.Fields, "dropwizard_tag_paths")
+<<<<<<< HEAD
 	delete(tbl.Fields, "named_patterns")
 	delete(tbl.Fields, "patterns")
 	delete(tbl.Fields, "custom_patterns")
 	delete(tbl.Fields, "custom_pattern_files")
 	delete(tbl.Fields, "timezone")
+=======
+>>>>>>> 23523ffd10bac33b0e40bad98bee4213049109ff
 
 	return parsers.NewParser(c)
 }
