@@ -999,7 +999,8 @@ func TestReplaceTimestampComma(t *testing.T) {
 	require.Equal(t, 34, m.Time().Second())
 	//Convert Nanosecond to milisecond for compare
 	require.Equal(t, 555, m.Time().Nanosecond()/1000000)
-  
+}
+
 func TestEmptyYearInTimestamp(t *testing.T) {
 	p := &Parser{
 		Patterns: []string{`%{APPLE_SYSLOG_TIME_SHORT:timestamp:ts-"Jan 2 15:04:05"} %{HOSTNAME} %{APP_NAME:app_name}\[%{NUMBER:pid:int}\]%{GREEDYDATA:message}`},
