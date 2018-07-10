@@ -18,6 +18,18 @@
   version = "v0.3.0"
 
 [[projects]]
+  name = "github.com/Azure/go-autorest"
+  packages = [
+    "autorest",
+    "autorest/adal",
+    "autorest/azure",
+    "autorest/azure/auth",
+    "autorest/date"
+  ]
+  revision = "1f7cd6cfe0adea687ad44a512dfe76140f804318"
+  version = "v10.12.0"
+
+[[projects]]
   name = "github.com/Microsoft/ApplicationInsights-Go"
   packages = [
     "appinsights",
@@ -182,6 +194,12 @@
   packages = ["."]
   revision = "06ea1031745cb8b3dab3f6a236daf2b0aa468b7e"
   version = "v3.2.0"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/dimchansky/utfbom"
+  packages = ["."]
+  revision = "6c6132ff69f0f6c088739067407b5d32c52e1d0f"
 
 [[projects]]
   name = "github.com/docker/distribution"
@@ -769,6 +787,8 @@
     "ed25519/internal/edwards25519",
     "md4",
     "pbkdf2",
+    "pkcs12",
+    "pkcs12/internal/rc2",
     "ssh/terminal"
   ]
   revision = "027cca12c2d63e3d62b670d901e8a2c95854feec"
@@ -968,6 +988,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "024194b983d91b9500fe97e0aa0ddb5fe725030cb51ddfb034e386cae1098370"
+  inputs-digest = "0d5dd4a9abcf581115a63eccb850dcdefd4a931bc432bc661351af5e8538a604"
   solver-name = "gps-cdcl"
   solver-version = 1
