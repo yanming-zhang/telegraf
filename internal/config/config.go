@@ -146,7 +146,10 @@ type AgentConfig struct {
 	// Quiet is the option for running in quiet mode
 	Quiet bool `toml:"quiet"`
 
-	// Log file name, the empty string means to log to stderr.
+	// Log target - file, stderr, eventlog (Windows only). The empty string means to log to stderr.
+	LogTarget string `toml:"logtarget"`
+
+	// Log file name			.
 	Logfile string `toml:"logfile"`
 
 	// The file will be rotated after the time interval specified.  When set
@@ -187,7 +190,7 @@ func (c *Config) AggregatorNames() []string {
 func (c *Config) ProcessorNames() []string {
 	var name []string
 	for _, processor := range c.Processors {
-		name = append(name, processor.Name)
+		name = append(name, processor.Config.Name)
 	}
 	return name
 }
@@ -196,7 +199,7 @@ func (c *Config) ProcessorNames() []string {
 func (c *Config) OutputNames() []string {
 	var name []string
 	for _, output := range c.Outputs {
-		name = append(name, output.Name)
+		name = append(name, output.Config.Name)
 	}
 	return name
 }
@@ -254,7 +257,9 @@ var agentConfig = `
   ## This controls the size of writes that Telegraf sends to output plugins.
   metric_batch_size = 1000
 
-  ## Maximum number of unwritten metrics per output.
+  ## Maximum number of unwritten metrics per output.  Increasing this value
+  ## allows for longer periods of output downtime without dropping metrics at the
+  ## cost of higher maximum memory usage.
   metric_buffer_limit = 10000
 
   ## Collection jitter is used to jitter the collection by a random amount.
@@ -641,7 +646,11 @@ func getDefaultConfigPath() (string, error) {
 	homefile := os.ExpandEnv("${HOME}/.telegraf/telegraf.conf")
 	etcfile := "/etc/telegraf/telegraf.conf"
 	if runtime.GOOS == "windows" {
-		etcfile = `C:\Program Files\Telegraf\telegraf.conf`
+		programFiles := os.Getenv("ProgramFiles")
+		if programFiles == "" { // Should never happen
+			programFiles = `C:\Program Files`
+		}
+		etcfile = programFiles + `\Telegraf\telegraf.conf`
 	}
 	for _, path := range []string{envfile, homefile, etcfile} {
 		if _, err := os.Stat(path); err == nil {
@@ -920,11 +929,7 @@ func (c *Config) addProcessor(name string, table *ast.Table) error {
 		return err
 	}
 
-	rf := &models.RunningProcessor{
-		Name:      name,
-		Processor: processor,
-		Config:    processorConfig,
-	}
+	rf := models.NewRunningProcessor(processor, processorConfig)
 
 	c.Processors = append(c.Processors, rf)
 	return nil
@@ -1103,6 +1108,14 @@ func buildAggregator(name string, tbl *ast.Table) (*models.AggregatorConfig, err
 		}
 	}
 
+	if node, ok := tbl.Fields["alias"]; ok {
+		if kv, ok := node.(*ast.KeyValue); ok {
+			if str, ok := kv.Value.(*ast.String); ok {
+				conf.Alias = str.Value
+			}
+		}
+	}
+
 	conf.Tags = make(map[string]string)
 	if node, ok := tbl.Fields["tags"]; ok {
 		if subtbl, ok := node.(*ast.Table); ok {
@@ -1119,6 +1132,7 @@ func buildAggregator(name string, tbl *ast.Table) (*models.AggregatorConfig, err
 	delete(tbl.Fields, "name_prefix")
 	delete(tbl.Fields, "name_suffix")
 	delete(tbl.Fields, "name_override")
+	delete(tbl.Fields, "alias")
 	delete(tbl.Fields, "tags")
 	var err error
 	conf.Filter, err = buildFilter(tbl)
@@ -1146,6 +1160,15 @@ func buildProcessor(name string, tbl *ast.Table) (*models.ProcessorConfig, error
 		}
 	}
 
+	if node, ok := tbl.Fields["alias"]; ok {
+		if kv, ok := node.(*ast.KeyValue); ok {
+			if str, ok := kv.Value.(*ast.String); ok {
+				conf.Alias = str.Value
+			}
+		}
+	}
+
+	delete(tbl.Fields, "alias")
 	delete(tbl.Fields, "order")
 	var err error
 	conf.Filter, err = buildFilter(tbl)
@@ -1334,6 +1357,14 @@ func buildInput(name string, tbl *ast.Table) (*models.InputConfig, error) {
 		}
 	}
 
+	if node, ok := tbl.Fields["alias"]; ok {
+		if kv, ok := node.(*ast.KeyValue); ok {
+			if str, ok := kv.Value.(*ast.String); ok {
+				cp.Alias = str.Value
+			}
+		}
+	}
+
 	cp.Tags = make(map[string]string)
 	if node, ok := tbl.Fields["tags"]; ok {
 		if subtbl, ok := node.(*ast.Table); ok {
@@ -1346,6 +1377,7 @@ func buildInput(name string, tbl *ast.Table) (*models.InputConfig, error) {
 	delete(tbl.Fields, "name_prefix")
 	delete(tbl.Fields, "name_suffix")
 	delete(tbl.Fields, "name_override")
+	delete(tbl.Fields, "alias")
 	delete(tbl.Fields, "interval")
 	delete(tbl.Fields, "tags")
 	var err error
@@ -2007,9 +2039,18 @@ func buildOutput(name string, tbl *ast.Table) (*models.OutputConfig, error) {
 		}
 	}
 
+	if node, ok := tbl.Fields["alias"]; ok {
+		if kv, ok := node.(*ast.KeyValue); ok {
+			if str, ok := kv.Value.(*ast.String); ok {
+				oc.Alias = str.Value
+			}
+		}
+	}
+
 	delete(tbl.Fields, "flush_interval")
 	delete(tbl.Fields, "metric_buffer_limit")
 	delete(tbl.Fields, "metric_batch_size")
+	delete(tbl.Fields, "alias")
 
 	return oc, nil
 }
